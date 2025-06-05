@@ -1,14 +1,27 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Il Mio Sito</title>
+  <title>Gioco Clicker</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <h1>Ciao, mondo!</h1>
-  <button onclick="saluta()">Cliccami</button>
+  <h1>Gioco Clicker</h1>
+  <p>Hai <strong>10 secondi</strong> per cliccare il più possibile!</p>
+
+  <button id="startBtn">Inizia Gioco</button>
+  <button id="clickBtn" disabled>Clicca!</button>
+
+  <h2>Punteggio: <span id="score">0</span></h2>
+
+  <div id="leaderboard">
+    <h3>Classifica</h3>
+    <ol id="scoresList"></ol>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
