@@ -1,71 +1,44 @@
-// Configura Firebase (SOSTITUISCI QUESTI DATI con i tuoi da Firebase)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_DOMAIN.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET.appspot.com",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
-};
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+  const firebaseConfig = {
+    apiKey: "AIzaSyA7bTcvcTOflPISWGQC7v7YaVATfyBjaao",
+    authDomain: "random-olivander.firebaseapp.com",
+    projectId: "random-olivander",
+    storageBucket: "random-olivander.firebasestorage.app",
+    messagingSenderId: "613600896235",
+    appId: "1:613600896235:web:3e463be8ea89bbfd300aae",
+    measurementId: "G-68GXNRDX22"
+  };
 
-const startBtn = document.getElementById("startBtn");
-const clickBtn = document.getElementById("clickBtn");
-const scoreEl = document.getElementById("score");
-const scoresList = document.getElementById("scoresList");
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-let score = 0;
-let timer;
-
-startBtn.onclick = () => {
-  score = 0;
-  scoreEl.textContent = score;
-  clickBtn.disabled = false;
-  startBtn.disabled = true;
-
-  timer = setTimeout(() => {
-    clickBtn.disabled = true;
-    startBtn.disabled = false;
-    salvaPunteggio(score);
-  }, 10000);
-};
-
-clickBtn.onclick = () => {
-  score++;
-  scoreEl.textContent = score;
-};
-
-function salvaPunteggio(punti) {
-  const nome = prompt("Inserisci il tuo nome:");
-  if (!nome) return;
-
-  db.collection("punteggi").add({
-    nome: nome,
-    punteggio: punti,
-    timestamp: Date.now()
-  }).then(() => {
-    caricaClassifica();
-  });
-}
-
-function caricaClassifica() {
-  scoresList.innerHTML = "";
-
-  db.collection("punteggi")
-    .orderBy("punteggio", "desc")
-    .limit(10)
-    .get()
-    .then(snapshot => {
-      snapshot.forEach(doc => {
-        const dati = doc.data();
-        const li = document.createElement("li");
-        li.textContent = `${dati.nome}: ${dati.punteggio}`;
-        scoresList.appendChild(li);
+  // Esempio: salva punteggio
+  async function salvaPunteggio(nome, punteggio) {
+    try {
+      await addDoc(collection(db, "punteggi"), {
+        nome: nome,
+        punteggio: punteggio,
+        timestamp: Date.now()
       });
-    });
-}
+      console.log("Punteggio salvato!");
+    } catch (e) {
+      console.error("Errore nel salvataggio:", e);
+    }
+  }
 
-// carica classifica al caricamento
-caricaClassifica();
+  // Esempio: carica classifica
+  async function caricaClassifica() {
+    const q = query(collection(db, "punteggi"), orderBy("punteggio", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+      console.log(doc.data()); // qui puoi aggiornare il DOM
+    });
+  }
+
+  // Chiamate di esempio:
+  salvaPunteggio("Mario", 42);
+  caricaClassifica();
+</script>
